@@ -1,0 +1,151 @@
+---
+config:
+  theme: neo
+  look: neo
+title: Luminary UML
+---
+classDiagram
+direction LR
+    class User {
+	    -userId: uuid
+	    -username: string
+	    -email: string
+	    -password: string
+	    -createdAt: Date
+	    -isActive: boolean
+	    +signUp() boolean
+	    +login() boolean
+	    +updateProfile() boolean
+    }
+    class UserPreference {
+	    -preferenceId: uuid
+	    +updatePreferences() boolean
+	    +getWeightedPreferences() Map~string,float~
+    }
+    class Rating {
+	    -ratingId: uuid
+	    -score: float
+	    -comment: string
+	    -createdAt: Date
+	    +createRating() boolean
+	    +updateRating() boolean
+    }
+    class Content {
+	    -contentId: uuid
+	    -title: string
+	    -description: string
+	    -releaseDate: Date
+	    -duration: float
+	    -rating: float
+	    +getDetails() ContentDetails
+	    +addContent(content: Content) Content
+	    +getContentById(contentId: string) Content
+	    +updateContent(content: Content) boolean
+	    +deleteContent(contentId: string) boolean
+	    +searchContent(query: string) List~Content~
+    }
+    class Movie {
+	    -studio: string
+	    -boxOffice: float
+    }
+    class Series {
+	    -numberOfSeasons: int
+	    -currentStatus: string
+    }
+    class Episode {
+	    -episodeId: uuid
+	    -seasonNumber: int
+	    -episodeNumber: int
+	    -title: string
+	    -description: string
+	    -releaseDate: Date
+	    -duration: int
+    }
+    class Genre {
+	    -genreId: uuid
+	    -name: string
+	    -description: string
+    }
+    class Person {
+	    -personId: uuid
+	    -name: string
+	    -biography: string
+	    -birthDate: Date
+	    -type: Enum[actor | director]
+	    -deathDate?: Date;
+    }
+    class RecommendationEngine {
+	    +generateRecommendations(userId: uuid) List~Recommendation~
+	    +updateUserModel(userId: uuid) boolean
+	    +processUserPreferences(userPreference: UserPreference) ProcessedPreferences
+	    +calculateContentSimilarity(userPreference: UserPreference, content: Content) float
+	    +determineGenreAffinities(userPreference: UserPreference) Map~string,float~
+    }
+    class Recommendation {
+	    -recommendationId: uuid
+	    -score: float
+	    -reason: string
+	    -createdAt: Date
+    }
+    class ProcessedPreferences {
+	    -genreWeights: Map~string,float~
+	    -actorAffinities: Map~string,float~
+	    -directorAffinities: Map~string,float~
+	    -contentTypePreferences: Map~string,float~
+	    -lastUpdated: Date
+	    +getTopGenres(limit: int) List~GenreWeight~
+	    +getOverallProfile() UserProfile
+    }
+    class RecommendationCriteria {
+	    -criteriaId: uuid
+	    -genreWeights: Map~string,float~
+	    -recencyWeight: float
+	    -popularityWeight: float
+	    -similarityThreshold: float
+	    +updateCriteria() boolean
+    }
+    class UserManager {
+	    +createUser(user: User) User
+	    +getUserById(userId: uuid) User
+	    +updateUser(user: User) boolean
+	    +deleteUser(userId: uuid) boolean
+	    +getUserPreferences(userId: uuid) UserPreference
+    }
+    class AuthenticationService {
+	    +authenticate(username: string, password: string) AuthToken
+	    +validateToken(token: string) boolean
+	    +refreshToken(token: string) AuthToken
+	    +logout(token: string) boolean
+    }
+    class ViewingHistory {
+	    -viewingHistoryId: uuid
+	    -viewDate: Date
+	    -completionPercentage: float
+    }
+
+	<<abstract>> Content
+
+    Content <|-- Movie
+    Content <|-- Series
+    User "1" o--> "*" Rating : creates
+    User "1" o--> "*" ViewingHistory : has
+    Content "*" -- "*" Genre : categorized by
+    Content "*" --> "*" Person : actors
+    Content "*" --> "1" Person : directed by
+    Series "1" o--> "*" Episode : contains
+    Rating "0..*" --> "1" Content : about
+    RecommendationEngine "1" ..> "1" RecommendationCriteria : uses
+    RecommendationEngine "1" --> "*" User : analyzes
+    RecommendationEngine "1" --> "*" Content : processes
+    RecommendationEngine "1" o--> "*" Recommendation : creates
+    Recommendation "*" -- "1" User : for
+    Recommendation "*" --> "1" Content : suggests
+    ViewingHistory "*" --> "1" Content : references
+    UserManager "1" --> "*" User : manages
+    AuthenticationService "1" --> "*" User : authenticates
+    RecommendationEngine --> UserPreference : processes >
+    RecommendationEngine "1" *--> "*" ProcessedPreferences : maintains
+    UserPreference "*" --> "*" Genre : prefers
+    UserPreference "*" --> "*" Person : favors_actors
+    UserPreference "*" --> "*" Person : follows_directors
+    User "1" *--> "1" UserPreference : has

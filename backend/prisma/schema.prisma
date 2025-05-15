@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  username        String   
+  email           String  
+  password        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  isActive        Boolean  @default(true)
+  ratings         Rating[]
+  recommendations Recommendation[]
+  viewHistory     ViewHistory[]
+  preferences     UserPreferences[]
+}
+
+model UserPreferences {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  genres    Genre[]
+  actors    Person[] @relation("ActorPreferences")
+  directors Person[] @relation("DirectorPreferences")
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  score     Float
+  comment   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  contentId String  
+  content   Content  @relation(fields: [contentId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Recommendation {
+  id        String   @id @default(uuid())
+  score     Float
+  reason    String
+  isViewed  Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  contentId String
+  content   Content  @relation(fields: [contentId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model ViewHistory {
+  id                   String   @id @default(uuid())
+  completionPercentage Float
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
+  contentId            String
+  content              Content  @relation(fields: [contentId], references: [id])
+  viewedAt             DateTime @default(now())
+}
+
+model Content {
+  id              String   @id @default(uuid())
+  title           String   
+  description     String
+  releaseDate     DateTime
+  duration        Float
+  rating          Float
+  type            ContentType
+  studio          String?
+  boxOffice       Float?
+  numberOfSeasons Int?
+  currentStatus   String? 
+  ratings         Rating[]
+  recommendations Recommendation[]
+  viewHistory     ViewHistory[]
+  genres          Genre[]
+  actors          Person[] @relation("ActorsInContent")
+  directorId      String
+  director        Person? @relation("DirectorOfContent", fields: [directorId], references: [id])
+  episodes        Episode[]
+}
+
+enum ContentType {
+  MOVIE
+  SERIES
+}
+
+model Episode {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  seasonNumber  Int
+  episodeNumber Int
+  duration      Float
+  releaseDate   DateTime
+  contentId     String
+  content       Content  @relation(fields: [contentId], references: [id])
+}
+
+model Person {
+  id                  String     @id @default(uuid())
+  name                String
+  biography           String
+  birthDate           DateTime
+  deathDate           DateTime?
+  awards              String[]
+  role                PersonRole
+  actorInContent      Content[]  @relation("ActorsInContent")
+  directorOfContent   Content[]  @relation("DirectorOfContent")
+  preferencesActor    UserPreferences[] @relation("ActorPreferences")
+  preferencesDirector UserPreferences[] @relation("DirectorPreferences")
+} 
+
+enum PersonRole {
+  ACTOR
+  DIRECTOR
+}
+
+model Genre {
+  id              String   @id @default(uuid())
+  name            String
+  description     String
+  contents        Content[]
+  userPreferences UserPreferences[]
+}
+
+
