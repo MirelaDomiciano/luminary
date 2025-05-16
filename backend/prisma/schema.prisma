@@ -27,6 +27,8 @@ model User {
   preferences     UserPreferences[]
 }
 
+
+
 model UserPreferences {
   id        String   @id @default(uuid())
   userId    String
