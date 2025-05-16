@@ -12,6 +12,10 @@ RUN npx prisma generate
 
 COPY . .
 
-EXPOSE 4000
+# Adiciona permissão de execução
+RUN chmod +x /app/node_modules/.bin/tsx
 
-CMD ["node", "index.js"]
+EXPOSE 3000
+
+# Executa as migrações e inicia o servidor
+CMD npx prisma migrate deploy && npx prisma db seed && npm run dev
