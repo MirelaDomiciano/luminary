@@ -127,7 +127,6 @@ luminary/
 │   │   ├── models/             # Data models
 │   │   ├── routes/             # API routes
 │   │   ├── schemas/            # Validation schemas
-│   │   ├── services/           # Business logic
 │   │   ├── repositories/       # Data access layer
 │   │   └── types/              # TypeScript type definitions
 │   ├── prisma/         # Database ORM configuration
