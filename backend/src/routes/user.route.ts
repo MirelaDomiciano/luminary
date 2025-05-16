@@ -11,6 +11,7 @@ import { PrismaClient } from '../../generated/prisma';
 
 const prisma = new PrismaClient();
 const router = Router();
+router.use(authMiddleware);
 
 // Rotas públicas
 router.post('/', createUserController);

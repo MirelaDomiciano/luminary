@@ -1,4 +1,4 @@
-import { PrismaClient, Content } from '@prisma/client';
+import { PrismaClient, Content, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -42,6 +42,13 @@ export const createContent = async (contentData: ContentCreateInput): Promise<Co
     });
   } catch (error) {
     console.error('Error creating content:', error);
+    
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        console.error(`Unique constraint violation on field: ${JSON.stringify(error.meta?.target)}`);
+      }
+    }
+    
     throw error;
   }
 };

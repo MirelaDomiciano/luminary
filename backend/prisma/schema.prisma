@@ -16,7 +16,7 @@ datasource db {
 model User {
   id              String   @id @default(uuid())
   username        String   
-  email           String  
+  email           String   @unique
   password        String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -73,7 +73,7 @@ model ViewHistory {
 
 model Content {
   id              String   @id @default(uuid())
-  title           String   
+  title           String   @unique
   description     String
   releaseDate     DateTime
   duration        Float
@@ -100,7 +100,7 @@ enum ContentType {
 
 model Episode {
   id            String   @id @default(uuid())
-  title         String
+  title         String 
   description   String
   seasonNumber  Int
   episodeNumber Int
@@ -131,7 +131,7 @@ enum PersonRole {
 
 model Genre {
   id              String   @id @default(uuid())
-  name            String
+  name            String   @unique
   description     String
   contents        Content[]
   userPreferences UserPreferences[]

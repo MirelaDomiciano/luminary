@@ -1,19 +1,19 @@
 /**
  * @openapi
  * tags:
- *  - name: Usuários
- *    description: Endpoints relacionados ao gerenciamento de usuários
+ *  - name: Users
+ *    description: Endpoints related to user management
  * 
  * /users:
  *   get:
  *     tags:
- *       - Usuários
- *     summary: Lista todos os usuários
+ *       - Users
+ *     summary: List all users
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de usuários retornada com sucesso
+ *         description: List of users returned successfully
  *         content:
  *           application/json:
  *             schema:
@@ -21,12 +21,14 @@
  *               items:
  *                 $ref: '#/components/schemas/User'
  *       401:
- *         description: Não autorizado
+ *         description: Unauthorized
  *
  *   post:
  *     tags:
- *       - Usuários
- *     summary: Cadastra um novo usuário
+ *       - Users
+ *     summary: Create a new user
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -35,47 +37,55 @@
  *             $ref: '#/components/schemas/UserInput'
  *     responses:
  *       201:
- *         description: Usuário criado com sucesso
+ *         description: User created successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Dados inválidos
+ *         description: Invalid data
+ *       401:
+ *         description: Unauthorized
  *
  * /users/{id}:
  *   get:
  *     tags:
- *       - Usuários
- *     summary: Busca um usuário pelo ID
+ *       - Users
+ *     summary: Search a user by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: User ID
  *     responses:
  *       200:
- *         description: Usuário encontrado
+ *         description: User found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: Usuário não encontrado
+ *         description: User not found
  *
- *   put:
+ *   patch:
  *     tags:
- *       - Usuários
- *     summary: Atualiza um usuário
+ *       - Users
+ *     summary: Update a user
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: User ID
  *     requestBody:
  *       required: true
  *       content:
@@ -84,63 +94,69 @@
  *             $ref: '#/components/schemas/UserInput'
  *     responses:
  *       200:
- *         description: Usuário atualizado com sucesso
+ *         description: User updated successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: Usuário não encontrado
+ *         description: User not found
  *
  *   delete:
  *     tags:
- *       - Usuários
- *     summary: Remove um usuário
+ *       - Users
+ *     summary: Remove a user
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         description: User ID
  *     responses:
  *       204:
- *         description: Usuário removido com sucesso
+ *         description: User removed successfully
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: Usuário não encontrado
+ *         description: User not found
  *
  * components:
  *   schemas:
  *     UserInput:
  *       type: object
  *       required:
- *         - name
+ *         - username
  *         - email
  *         - password
  *       properties:
- *         name:
+ *         username:
  *           type: string
- *           example: João Silva
+ *           example: "John Smith"
  *         email:
  *           type: string
- *           example: joao@exemplo.com
+ *           example: "john@example.com"
  *         password:
  *           type: string
- *           example: senha123
+ *           example: "password123"
  *     User:
  *       type: object
  *       properties:
  *         id:
  *           type: string
- *           example: 60d21b4667d0d8992e610c85
+ *           example: "60d21b4667d0d8992e610c85"
  *         name:
  *           type: string
- *           example: João Silva
+ *           example: "John Smith"
  *         email:
  *           type: string
- *           example: joao@exemplo.com
+ *           example: "john@example.com"
  *         createdAt:
  *           type: string
  *           format: date-time
- *           example: 2023-01-01T12:00:00Z
+ *           example: "2023-01-01T12:00:00Z"
  */ 

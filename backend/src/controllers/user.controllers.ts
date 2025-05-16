@@ -7,14 +7,26 @@ import {
   updateUser, 
   deleteUser 
 } from '../repositories/user.repository';
+import { PrismaClient, Prisma } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const createUserController = async (req: Request, res: Response) => {
   try {
     const { username, email, password, isActive } = req.body;
     
-    const existingUser = await getUserByEmail(email);
-    if (existingUser) {
+    // Check for existing email
+    const existingUserByEmail = await getUserByEmail(email);
+    if (existingUserByEmail) {
       return res.status(400).json({ message: 'Email already in use' });
+    }
+    
+    // Check for existing username
+    const existingUserByUsername = await prisma.user.findFirst({
+      where: { username }
+    });
+    if (existingUserByUsername) {
+      return res.status(400).json({ message: 'Username already in use' });
     }
     
     const newUser = await createUser({
@@ -26,6 +38,18 @@ export const createUserController = async (req: Request, res: Response) => {
     
     res.status(201).json(newUser);
   } catch (error) {
+    // Check for unique constraint violations that might have slipped through
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        const target = error.meta?.target as string[];
+        if (target.includes('email')) {
+          return res.status(400).json({ message: 'Email already in use' });
+        }
+        if (target.includes('username')) {
+          return res.status(400).json({ message: 'Username already in use' });
+        }
+      }
+    }
     res.status(400).json({ message: 'Error creating user', error: (error as Error).message });
   }
 };
@@ -59,11 +83,24 @@ export const updateUserController = async (req: Request, res: Response) => {
     const id = req.params.id;
     const { username, email, password, isActive } = req.body;
     
-    // Se o email estiver sendo atualizado, verificar se já existe
+    // If email is being updated, check if it's already in use
     if (email) {
       const existingUser = await getUserByEmail(email);
       if (existingUser && existingUser.id !== id) {
         return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+    
+    // If username is being updated, check if it's already in use
+    if (username) {
+      const existingUser = await prisma.user.findFirst({
+        where: { 
+          username,
+          id: { not: id }
+        }
+      });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Username already in use' });
       }
     }
     
@@ -80,6 +117,18 @@ export const updateUserController = async (req: Request, res: Response) => {
     
     res.json(user);
   } catch (error) {
+    // Check for unique constraint violations
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        const target = error.meta?.target as string[];
+        if (target.includes('email')) {
+          return res.status(400).json({ message: 'Email already in use' });
+        }
+        if (target.includes('username')) {
+          return res.status(400).json({ message: 'Username already in use' });
+        }
+      }
+    }
     res.status(400).json({ message: 'Error updating user', error: (error as Error).message });
   }
 };

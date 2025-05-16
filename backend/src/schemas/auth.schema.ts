@@ -1,14 +1,15 @@
 /**
  * @openapi
  * tags:
- *  - name: Autenticação
- *    description: Endpoints relacionados ao login e emissão de token
+ *  - name: Authentication
+ *    description: Endpoints related to login and token issuance
  * 
  * /auth/login:
  *   post:
  *     tags:
- *       - Autenticação
- *     summary: Realiza login e gera um token JWT
+ *       - Authentication
+ *     summary: Performs login and generates a JWT token
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
@@ -17,15 +18,15 @@
  *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
- *         description: Login bem-sucedido, retorna o token JWT
+ *         description: Successful login, returns the JWT token
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
  *       400:
- *         description: Dados inválidos (email ou senha ausentes)
+ *         description: Invalid data (missing email or password)
  *       401:
- *         description: Usuário não encontrado ou senha inválida
+ *         description: User not found or invalid password
  * 
  * components:
  *   schemas:
@@ -37,17 +38,17 @@
  *       properties:
  *         email:
  *           type: string
- *           example: usuario@exemplo.com
+ *           example: user@example.com
  *         password:
  *           type: string
- *           example: senha123
+ *           example: password123
  *     LoginResponse:
  *       type: object
  *       properties:
  *         message:
  *           type: string
- *           example: Login realizado com sucesso!
+ *           example: Login successful!
  *         token:
  *           type: string
- *           example: eyJhbGciOiJzI1NiIsInRCI6IkpX9...
+ *           example: eyJhbGciOiJzI1NiIsInRCIjoiS...
  */ 
