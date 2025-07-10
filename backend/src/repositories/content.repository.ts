@@ -55,7 +55,13 @@ export const createContent = async (contentData: ContentCreateInput): Promise<Co
 
 export const getAllContents = async (): Promise<Content[]> => {
   try {
-    return await prisma.content.findMany();
+    return await prisma.content.findMany({
+      include: {
+        genres: true,
+        actors: true,
+        director: true,
+      },
+    });
   } catch (error) {
     console.error('Error fetching all contents:', error);
     throw error;
@@ -66,6 +72,11 @@ export const getContentById = async (id: string): Promise<Content | null> => {
   try {
     return await prisma.content.findUnique({
       where: { id: id },
+      include: {
+        genres: true,
+        actors: true,
+        director: true,
+      },
     });
   } catch (error) {
     console.error(`Error fetching content with ID ${id}:`, error);
@@ -75,12 +86,13 @@ export const getContentById = async (id: string): Promise<Content | null> => {
 
 export const updateContent = async (id: string, contentData: ContentUpdateInput): Promise<Content | null> => {
   try {
-    const { genreIds, actorIds, ...contentDetails } = contentData;
+    const { genreIds, actorIds, releaseDate, ...contentDetails } = contentData;
     
     return await prisma.content.update({
       where: { id: id },
       data: {
         ...contentDetails,
+        ...(releaseDate ? { releaseDate: new Date(releaseDate) } : {}),
         ...(genreIds
           ? {
               genres: {
@@ -95,6 +107,11 @@ export const updateContent = async (id: string, contentData: ContentUpdateInput)
               },
             }
           : {}),
+      },
+      include: {
+        genres: true,
+        actors: true,
+        director: true,
       },
     });
   } catch (error) {

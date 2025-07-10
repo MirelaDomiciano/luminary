@@ -31,7 +31,7 @@ model User {
 
 model UserPreferences {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   genres    Genre[]
   actors    Person[] @relation("ActorPreferences")
@@ -47,6 +47,8 @@ model Rating {
   contentId String  
   content   Content  @relation(fields: [contentId], references: [id])
   createdAt DateTime @default(now())
+  
+  @@unique([userId, contentId])
 }
 
 model Recommendation {
@@ -59,6 +61,8 @@ model Recommendation {
   contentId String
   content   Content  @relation(fields: [contentId], references: [id])
   createdAt DateTime @default(now())
+  
+  @@unique([userId, contentId])
 }
 
 model ViewHistory {
@@ -69,6 +73,8 @@ model ViewHistory {
   contentId            String
   content              Content  @relation(fields: [contentId], references: [id])
   viewedAt             DateTime @default(now())
+  
+  @@unique([userId, contentId])
 }
 
 model Content {
@@ -83,6 +89,7 @@ model Content {
   boxOffice       Float?
   numberOfSeasons Int?
   currentStatus   String? 
+  imageUrl        String?
   ratings         Rating[]
   recommendations Recommendation[]
   viewHistory     ViewHistory[]
@@ -108,11 +115,13 @@ model Episode {
   releaseDate   DateTime
   contentId     String
   content       Content  @relation(fields: [contentId], references: [id])
+  
+  @@unique([contentId, seasonNumber, episodeNumber])
 }
 
 model Person {
   id                  String     @id @default(uuid())
-  name                String
+  name                String     @unique
   biography           String
   birthDate           DateTime
   deathDate           DateTime?
