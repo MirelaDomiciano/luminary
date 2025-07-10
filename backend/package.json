@@ -108,7 +108,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.18",
+    "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.18",
     "@types/swagger-jsdoc": "^6.0.4",

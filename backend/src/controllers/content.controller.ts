@@ -220,10 +220,11 @@ export const updateContent = async (req: Request, res: Response) => {
 export const deleteContent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    
     await contentRepository.deleteContent(id);
     return res.status(204).send();
   } catch (error) {
-    return res.status(500).json({ message: 'Error to delete content', error });
+    return res.status(500).json({ message: 'Error deleting content', error });
   }
-}; 
+};
+
+ 

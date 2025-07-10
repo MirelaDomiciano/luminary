@@ -18,4 +18,4 @@ RUN chmod +x /app/node_modules/.bin/tsx
 EXPOSE 3000
 
 # Executa as migrações e inicia o servidor
-CMD npx prisma migrate deploy && npx prisma db seed && npm run dev
+CMD npx prisma migrate deploy && (npx prisma db seed || echo "Seed já executado ou falhou - continuando...") && npm run dev
